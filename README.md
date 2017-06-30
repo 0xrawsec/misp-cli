@@ -1,6 +1,6 @@
 # Description
 
-Command line utility to query your favorite MISP instance.
+Command line utility to query your favorite **MISP** instance.
 
 Combined with the command `jq` you can achieve very nice things from command line.
 
