@@ -55,6 +55,9 @@ var (
 	debug   bool
 	version bool
 
+	// insecured connection
+	insecured bool
+
 	attributeSearchFlag bool
 	eventSearchFlag     bool
 	// Arguments to pass to Misp Query can be used for both attributes and events
@@ -95,6 +98,7 @@ func isValidMispDate(date string) bool {
 
 func main() {
 	flag.BoolVar(&debug, "d", debug, "Enable debugging")
+	flag.BoolVar(&insecured, "i", insecured, "Insecured HTTPs connection")
 	flag.BoolVar(&eventSearchFlag, "e", eventSearchFlag, "Flag to search for events")
 	flag.BoolVar(&attributeSearchFlag, "a", attributeSearchFlag, "Flag to search for attributes")
 	flag.BoolVar(&version, "version", version, "Print version information")
@@ -150,7 +154,13 @@ func main() {
 	// Load the configuration file
 	c := misp.LoadConfig(mispConfig)
 	// Start a new MISP connection
-	mispCon = misp.NewCon(c.Proto, c.Host, c.APIKey, c.APIURL)
+	if insecured {
+		log.Info("Using Insecured Connection to MISP")
+		mispCon = misp.NewInsecureCon(c.Proto, c.Host, c.APIKey, c.APIURL)
+	} else {
+		log.Info("Using Secured Connection to MISP")
+		mispCon = misp.NewCon(c.Proto, c.Host, c.APIKey, c.APIURL)
+	}
 
 	// Start with further processing
 
